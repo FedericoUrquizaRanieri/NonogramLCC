@@ -10,7 +10,7 @@ body {
 
 .square {
   background: #fff;
-  border: 1px solid #999;
+  border: 1px solid #000000;
   font-size: 24px;
   font-weight: bold;
   margin-right: -1px;
@@ -41,10 +41,11 @@ body {
 }
 
 .clue {
+  font-size: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #e486ad;
+  background: #eaeff9;
   border-radius: 8px;
   margin: 5px;
 }
