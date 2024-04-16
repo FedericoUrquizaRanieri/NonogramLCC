@@ -35,3 +35,26 @@ put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
 	Cell == Content
 		;
 	replace(_Cell, ColN, Content, Row, NewRow)).
+
+%check(" ",[RowN, ColN],[Rc1|_RowClues],[Cc1|_ColClues],NewGrid,Rs,Cs):-
+%	!.
+%check(" ",[RowN, ColN],[Rc1],[Cc1|_ColClues],NewGrid,Rs,Cs):-
+%	!.
+%check(" ",[RowN, ColN],[Rc1|_RowClues],[Cc1],NewGrid,Rs,Cs):-
+%	!.
+%check(" ",[RowN, ColN],[RowClues],[ColClues],NewGrid,Rs,Cs):-
+%	!.	
+put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
+	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
+	replace(Row, RowN, NewRow, Grid, NewGrid),
+
+	% NewRow is the result of replacing the cell Cell in position ColN of Row by _,
+	% if Cell matches Content (Cell is instantiated in the call to replace/5).	
+	% Otherwise (;)
+	% NewRow is the result of replacing the cell in position ColN of Row by Content (no matter its content: _Cell).			
+	(replace(Cell, ColN, _, Row, NewRow),
+	Cell == Content
+		;
+	replace(_Cell, ColN, Content, Row, NewRow)).
+	%check(Content, [RowN, ColN], _RowsClues, _ColsClues,NewGrid, Rs, Cs).
+	

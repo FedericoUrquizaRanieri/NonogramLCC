@@ -4,7 +4,7 @@
 
 body {
   font-family: sans-serif;
-  margin: 20px;
+  margin: 0px;
   padding: 0;
 }
 
@@ -29,7 +29,9 @@ body {
 
 .vertical {
   display: flex;
+  margin-right: 61px;
   flex-direction: column;
+  margin-left: 96px;
 }
 
 .rowClues {
@@ -59,10 +61,61 @@ body {
 }
 
 .game {
+  position: relative;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-btn{
+  margin: 20px;
+  background-color: aquamarine;
+  border :1px solid #000000;
+  border-radius: 99px;
+  width: 50px;
+  height: 28px;
+  transition: backgruond-color 0.1s ease,border-color 0.2s ease;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.784);
+  position: relative;
+}
+
+.toggle-btn .circleRight{
+  height: 20px;
+  width: 20px;
+  background-color: #fff;
+  border-radius: 99px;
+  transform: translateX(0);
+  transition: left 0.15s ease;
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.toggle-btn .circleLeft{
+  height: 20px;
+  width: 20px;
+  background-color: #fff;
+  border-radius: 99px;
+  transform: translateX(0);
+  transition: left 0.15s ease;
+  position: absolute;
+  left: calc(50px - 25px);;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.toggle-btn{
+  background-color: aqua;
+}
+
+.content{
+  display: flex;
+  align-items: center;
 }
 
 .game-info {
-  margin-left: 20px;
+  
 }

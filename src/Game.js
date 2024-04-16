@@ -11,6 +11,8 @@ function Game() {
   const [rowsClues, setRowsClues] = useState(null);
   const [colsClues, setColsClues] = useState(null);
   const [waiting, setWaiting] = useState(false);
+  const [toggled,setToggled]= useState(false);
+  console.log(toggled);
 
   useEffect(() => {
     // Creation of the pengine server instance.    
@@ -57,14 +59,22 @@ function Game() {
   const statusText = 'Keep playing!';
   return (
     <div className="game">
-      <Board
-        grid={grid}
-        rowsClues={rowsClues}
-        colsClues={colsClues}
-        onClick={(i, j) => handleClick(i, j)}
-      />
-      <div className="game-info">
-        {statusText}
+      <div className="content">
+        <Board
+          grid={grid}
+          rowsClues={rowsClues}
+          colsClues={colsClues}
+          onClick={(i, j) => handleClick(i, j)}
+        />
+        <div className="game-info">
+          {statusText}
+        </div>
+      </div>
+      
+      <div className="TButton">
+        <button className={`toggle-btn`} onClick={()=> setToggled(!toggled)}>
+          <div className={`${toggled ? 'circleRight' : 'circleLeft' }`}></div>
+        </button>
       </div>
     </div>
   );
