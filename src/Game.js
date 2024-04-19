@@ -55,9 +55,12 @@ function Game() {
     return null;
   }
 
-  const statusText = 'Keep playing!';
+  const titleText = 'NONOGRAM';
   return (
     <div className="game">
+      <div className="game-text">
+          {titleText}
+        </div>
       <div className="content">
         <Board
           grid={grid}
@@ -65,11 +68,7 @@ function Game() {
           colsClues={colsClues}
           onClick={(i, j) => handleClick(i, j)}
         />
-        <div className="game-info">
-          {statusText}
-        </div>
       </div>
-      
       <div className="TButton">
         <button className={`toggle-btn`} onClick={()=> setToggled(!toggled)}>
           <div className={`${toggled ? 'circleRight' : 'circleLeft' }`}></div>
