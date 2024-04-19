@@ -12,7 +12,6 @@ function Game() {
   const [colsClues, setColsClues] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [toggled,setToggled]= useState(false);
-  console.log(toggled);
 
   useEffect(() => {
     // Creation of the pengine server instance.    
