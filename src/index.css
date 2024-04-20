@@ -11,6 +11,12 @@ body {
 .game-text{
   font-size: x-large;
   font-family: Times;
+  text-align: center;
+}
+
+.TButton{
+  display: flex;
+  align-items: center;
 }
 
 .square {
@@ -36,7 +42,6 @@ body {
   display: flex;
   margin-right: 61px;
   flex-direction: column;
-  margin-left: 96px;
 }
 
 .rowClues {
@@ -66,12 +71,12 @@ body {
 }
 
 .game {
-  position: relative;
   display: flex;
   flex-direction: column;
   height: 100vh;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
+  width: auto;
 }
 
 .toggle-btn{

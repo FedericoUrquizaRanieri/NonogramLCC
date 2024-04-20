@@ -63,6 +63,7 @@ findClue([_H|RowClue],Index,Retorno):-
 %
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %	
+searchClue([],[],true).
 searchClue([],[H|Row],Out):-
 	H = "X",
 	searchClue([],Row,Out).
@@ -99,12 +100,18 @@ searchActiveClue([H|Clues],[X|Row],Out):-
 	searchActiveClue([Hs|Clues],Row,Out),
     !.
 
+checkRows(RowN,RowClues,Grid,RowSat):-
+	rowToList(RowN,Grid,Selected),
+	checkList(RowN,RowClues,Selected,RowSat).
+checkCols(ColN,ColClues,Grid,ColSat):-
+	rowToList(ColN,Grid,Selected),
+	checkList(ColN,ColClues,Selected,ColSat).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
 
-put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
+put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowsSat, ColSat):-
 	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
 	replace(Row, RowN, NewRow, Grid, NewGrid),
 
@@ -116,14 +123,3 @@ put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
 	Cell == Content
 		;
 	replace(_Cell, ColN, Content, Row, NewRow)).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%documentar
-%
-% put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
-%
-cluesControl([RowN, ColN], RowsClues, ColsClues, Grid, RowSat, ColSat):-
-	append(Grid,[],GridAux),
-	rowToList(RowN,GridAux,SelectedRow),
-	colToList(ColN,GridAux,SelectedCol),
-	checkList(RowN,RowsClues,SelectedRow,RowSat),
-	checkList(ColN,ColsClues,SelectedCol,ColSat).

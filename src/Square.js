@@ -4,7 +4,7 @@ function Square({ value, onClick }) {
     let color;
   
   // Define el color de fondo basado en el valor
-  if (value === '') {
+  if (value === '#') {
     color = '#344862'; // Cambia el color a tu preferencia
   } else {
     color = 'white'; // Otro color de fondo para otros valores
