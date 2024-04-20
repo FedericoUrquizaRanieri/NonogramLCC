@@ -125,3 +125,9 @@ body {
   display: flex;
   align-items: center;
 }
+
+.paint-mode{
+  height:30px; 
+  width:30px;
+  background-color: #344862;
+}

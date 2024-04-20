@@ -12,6 +12,7 @@ function Game() {
   const [rowsClues, setRowsClues] = useState(null);
   const [colsClues, setColsClues] = useState(null);
   const [waiting, setWaiting] = useState(false);
+  const [content, setContent] = useState('#');
   const [toggled,setToggled]= useState(false);
 
   useEffect(() => {
@@ -40,7 +41,6 @@ function Game() {
     }
     // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
     const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables. squares = [["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]]
-    const content = '#'; // Content to put in the clicked square.
     const rowsCluesS = JSON.stringify(rowsClues);
     const colsCluesS = JSON.stringify(colsClues);
     const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`; // queryS = put("#",[0,1],[], [],[["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]], GrillaRes, FilaSat, ColSat)
@@ -53,6 +53,10 @@ function Game() {
       setWaiting(false);
     });
   }
+
+  useEffect(() => {
+    setContent(content === '#' ? 'X' : '#');
+  }, [toggled]);
 
   if (!grid) {
     return null;
@@ -74,17 +78,12 @@ function Game() {
       </div>
         <div className="TButton">
         <div className='CrossSquare'>
-            <Square
-              value="X"
-            />
+            <b style={{fontSize:28}}>X</b>
           </div>
           <button className={`toggle-btn`} onClick={()=> setToggled(!toggled)}>
-            <div className={`${toggled ? 'circleRight' : 'circleLeft' }`}></div>
+            <div className={`${toggled ? 'circleLeft' : 'circleRight' }`}></div>
           </button>
-          <div className='PaintedSquare'>
-            <Square
-              value="#"
-            />
+          <div className='paint-mode'>
           </div>
         </div>
     </div>
