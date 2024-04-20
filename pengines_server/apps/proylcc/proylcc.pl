@@ -25,7 +25,7 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
 rowToList(0,[H|_Row],H).
 rowToList(RowN,[_H|Row],Out):-
 	RowNX is RowN-1,
-	colToListSearch(RowNX,Row,Out).
+    rowToList(RowNX,Row,Out).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%documentar
 %
@@ -84,15 +84,16 @@ searchClue([H|Clues],[X|Row],Out):-
 %
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
-searchActiveClue([0],[],_Out):-
-    !.
+searchActiveClue([0],[],true).
+searchActiveClue([_H|_Clues],[],false).
 searchActiveClue([0|Clues],[X|Row],Out):-
 	X = "X",
 	searchClue(Clues,Row,Out),
     !.
 searchActiveClue([_H|_Clues],[X|_Row],false):-
-	X is "X",
+	X = "X",
     !.
+searchActiveClue([0|_Clues],["#"|_Row],false).
 searchActiveClue([H|Clues],[X|Row],Out):-
 	X = "#",
 	H > 0,
@@ -104,14 +105,14 @@ checkRows(RowN,RowClues,Grid,RowSat):-
 	rowToList(RowN,Grid,Selected),
 	checkList(RowN,RowClues,Selected,RowSat).
 checkCols(ColN,ColClues,Grid,ColSat):-
-	rowToList(ColN,Grid,Selected),
+	colToList(ColN,Grid,Selected),
 	checkList(ColN,ColClues,Selected,ColSat).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
 
-put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowsSat, ColSat):-
+put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):-
 	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
 	replace(Row, RowN, NewRow, Grid, NewGrid),
 
@@ -122,4 +123,8 @@ put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowsSat, ColSat)
 	(replace(Cell, ColN, _, Row, NewRow),
 	Cell == Content
 		;
-	replace(_Cell, ColN, Content, Row, NewRow)).
+	replace(_Cell, ColN, Content, Row, NewRow)),
+	copy_term(NewGrid,Aux4Col),
+	copy_term(NewGrid,Aux4Row),
+    checkRows(RowN,RowsClues,Aux4Row,RowSat),
+    checkCols(ColN,ColsClues,Aux4Col,ColSat).

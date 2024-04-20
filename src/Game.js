@@ -47,6 +47,8 @@ function Game() {
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['ResGrid']);
+        console.log(response['RowSat']);
+        console.log(response['ColSat']);
       }
       setWaiting(false);
     });
