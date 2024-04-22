@@ -10,8 +10,9 @@ body {
 
 .game-text{
   font-size: x-large;
-  font-family: Times;
+  font-family:'Trebuchet MS';
   text-align: center;
+  font-weight: 1000 ;
 }
 
 .TButton{

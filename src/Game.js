@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import PengineClient from './PengineClient';
 import Board from './Board';
-import Square from './Square';
+import PengineClient from './PengineClient';
 
 let pengine;
 
@@ -13,11 +12,13 @@ function Game() {
   const [colsClues, setColsClues] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [content, setContent] = useState('#');
+  const [cluesFilas, setCluesFilas] = useState([]);
+  const [cluesColumnas, setCluesColumnas] = useState([]);
   const [toggled,setToggled]= useState(false);
 
   useEffect(() => {
-    // Creation of the pengine server instance.    
-    // This is executed just once, after the first render.    
+    // Creation of the pengine server instance.
+    // This is executed just once, after the first render.
     // The callback will run when the server is ready, and it stores the pengine instance in the pengine variable. 
     PengineClient.init(handleServerReady);
   }, []);

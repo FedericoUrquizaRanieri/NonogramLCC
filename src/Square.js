@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 function Square({ value, onClick }) {
     let color;
@@ -11,7 +11,7 @@ function Square({ value, onClick }) {
   }
     return (
         <button className="square" onClick={onClick} style={{background:color, boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', transition: 'background-color 0.3s'}}>
-            {value !== '_' ? value : null}
+            {value === 'X' ? value : ''}
         </button>
     );
 }
