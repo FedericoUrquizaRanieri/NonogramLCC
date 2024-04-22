@@ -48,6 +48,18 @@ function Game() {
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['ResGrid']);
+        if(response['RowSat']){
+          setCluesFilas([...cluesFilas, i])
+        }
+        else{
+          setCluesFilas(cluesFilas.filter(e => e !== i))
+        }
+        if(response['ColSat']){
+          setCluesColumnas([...cluesColumnas, j])
+        }
+        else{
+          setCluesColumnas(cluesColumnas.filter(e => e !== j))
+        }
         console.log(response['RowSat']);
         console.log(response['ColSat']);
       }
@@ -74,6 +86,8 @@ function Game() {
           grid={grid}
           rowsClues={rowsClues}
           colsClues={colsClues}
+          cluesFilas={cluesFilas}
+          cluesColumnas={cluesColumnas}
           onClick={(i, j) => handleClick(i, j)}
         />
       </div>

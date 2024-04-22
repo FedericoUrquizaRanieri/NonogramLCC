@@ -61,6 +61,7 @@ body {
   background: #eaeff9;
   border-radius: 8px;
   margin: 5px;
+  border: 2px solid #eaeff9;
 }
 
 .clue div {
@@ -131,4 +132,15 @@ body {
   height:30px; 
   width:30px;
   background-color: #344862;
+}
+
+.satisfied{
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 8px;
+  margin: 5px;
+  border: 4px solid #eaeff9
 }
