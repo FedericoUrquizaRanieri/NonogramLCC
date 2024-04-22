@@ -60,12 +60,12 @@ body {
   align-items: center;
   background: #eaeff9;
   border-radius: 8px;
-  margin: 5px;
+  margin: 2px;
   border: 2px solid #eaeff9;
 }
 
 .clue div {
-  margin: 2px
+  margin: 1px
 }
 
 .colClues .clue {

@@ -5,6 +5,7 @@
 
 :-use_module(library(lists)).
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % replace(?X, +XIndex, +Y, +Xs, -XsY)
@@ -73,6 +74,9 @@ findClue([_H|RowClue],Index,Retorno):-
 % This method searchs in a list for a painted square and checks if the painted sqquares are in order
 %
 searchClue([],[],true).
+searchClue([0],[],true).
+searchClue([_H],[],false).
+searchClue([_H|_Clues],[],false).
 searchClue([],[H|Row],Out):-
 	H = "X",
 	searchClue([],Row,Out).
