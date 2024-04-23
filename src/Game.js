@@ -68,7 +68,7 @@ function Game() {
   }
 
   useEffect(() => {
-    setContent(content === '#' ? 'X' : '#');
+    setContent(toggled ? 'X' : '#');
   }, [toggled]);
 
   if (!grid) {
@@ -96,7 +96,7 @@ function Game() {
             <b style={{fontSize:28}}>X</b>
           </div>
           <button className={`toggle-btn`} onClick={()=> setToggled(!toggled)}>
-            <div className={`${toggled ? 'circleLeft' : 'circleRight' }`}></div>
+            <div className={`${toggled ? 'circleRight' : 'circleLeft' }`}></div>
           </button>
           <div className='paint-mode'>
           </div>
