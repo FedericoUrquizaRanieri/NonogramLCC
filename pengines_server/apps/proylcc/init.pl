@@ -16,16 +16,4 @@
      ["#","#","#", _ , _ ],
      [ _ , _ ,"#","#","#"]
     ]
-%
-%transposeGrid(ColPivot,ColPivot,_Grid,[]).
-%transposeGrid(Col,ColPivot,Grid,[Ht|TGrid]):-
-%	colToList(Col,Grid,Ht),
-%	ColX is Col+1,
-%	transposeGrid(ColX,ColPivot,Grid,TGrid).
-%
-%initialCheckList([],[],[]).
-%initialCheckList([H|Grid],[Hc|Clues],[Out|SatClues]):-
-%	searchClue(Hc,H,Out),
-%	initialCheckList(Grid,Clues,SatClues).
-
 ).
