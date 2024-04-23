@@ -31,6 +31,36 @@ function Game() {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
+        handleStart();
+      }
+    });
+  }
+
+  function handleStart(){
+    const squaresRow = JSON.stringify(grid).replaceAll('"_"', '_');
+    const squaresCol = JSON.stringify(grid).replaceAll('"_"', '_');
+    const rowsCluesS = JSON.stringify(rowsClues);
+    const colsCluesS = JSON.stringify(colsClues);
+    const queryInitialcheckRow = `initialCheckList(${squaresRow}, ${rowsCluesS}, RowSatList)`;
+    const queryInitialcheckCol = `initialCheckCol(${squaresCol}, ${colsCluesS}, ColSatList)`;
+    pengine.query(queryInitialcheckRow, (success, response) => {
+      console.log(success);
+      if (success) {
+          console.log(response);
+          for (let index = 0; index < response['RowSatList'].length; index++) {
+              if(response['RowSatList'][index])
+               setCluesFilas([...cluesFilas, index]);
+          }
+      }
+    });
+    pengine.query(queryInitialcheckCol, (success, response) => {
+      console.log(success);
+      if (success) {
+          console.log(response);
+          for (let index = 0; index < response['ColSatList'].length; index++) {
+              if(response['ColSatList'][index])
+               setCluesColumnas([...cluesColumnas, index]);
+          }
       }
     });
   }
@@ -60,8 +90,6 @@ function Game() {
         else{
           setCluesColumnas(cluesColumnas.filter(e => e !== j))
         }
-        console.log(response['RowSat']);
-        console.log(response['ColSat']);
       }
       setWaiting(false);
     });
