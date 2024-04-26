@@ -1,10 +1,23 @@
 :- module(proylcc,
 	[  
-		put/8
+		put/9
 	]).
 
 :-use_module(library(lists)).
 
+
+isAWin(Grid,ColsClues,RowClues,Win):-
+	initialCheckCol(Grid,ColsClues,SatCols),
+	initialCheckList(Grid,RowClues,SatRows),
+	isAWinCheck(SatRows,SatCols,Win).
+
+isAWinCheck([],[],true):-
+	!.
+isAWinCheck([true|Rows],[true|Cols],Out):-
+    isAWinCheck(Rows,Cols,Out),
+	!.
+isAWinCheck([_HR|_Rows],[_HC|_Cols],false):-
+	!.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -170,7 +183,7 @@ checkCols(ColN,ColClues,Grid,ColSat):-
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
 
-put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):-
+put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat,Win):-
 	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
 	replace(Row, RowN, NewRow, Grid, NewGrid),
 
@@ -186,5 +199,7 @@ put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):
 	% Then it check on the grid the clues
 	copy_term(NewGrid,Aux4Col),
 	copy_term(NewGrid,Aux4Row),
+	copy_term(NewGrid,AuxTotal),
     checkRows(RowN,RowsClues,Aux4Row,RowSat),
-    checkCols(ColN,ColsClues,Aux4Col,ColSat).
+    checkCols(ColN,ColsClues,Aux4Col,ColSat),
+	isAWin(AuxTotal,ColsClues,RowsClues,Win).
