@@ -118,6 +118,7 @@ function Game() {
           cluesFilas={cluesFilas}
           cluesColumnas={cluesColumnas}
           onClick={(i, j) => handleClick(i, j)}
+          onLoad={() => handleStart()}
         />
       </div>
         <div className="TButton">
