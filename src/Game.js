@@ -15,6 +15,7 @@ function Game() {
   const [cluesFilas, setCluesFilas] = useState([]);
   const [cluesColumnas, setCluesColumnas] = useState([]);
   const [toggled,setToggled]= useState(false);
+  const [status,setStatus]= useState('');
 
   useEffect(() => {
     // Creation of the pengine server instance.
@@ -91,10 +92,19 @@ function Game() {
           setCluesColumnas(cluesColumnas.filter(e => e !== j))
         }
         console.log(response['Win']);
+        if(response['Win']) {
+          setStatus('YOU WIN! CONGRATS');
+        } 
+        else{
+          setStatus('');
+        }
       }
       setWaiting(false);
     });
   }
+
+
+ 
 
   useEffect(() => {
     setContent(toggled ? 'X' : '#');   
@@ -110,6 +120,7 @@ function Game() {
       <div className="game-text">
           {titleText}
       </div>
+      <div className="game-text">{status}</div>
       <div className="content">
         <Board
           grid={grid}
