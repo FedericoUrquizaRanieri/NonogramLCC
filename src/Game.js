@@ -15,6 +15,7 @@ function Game() {
   const [cluesFilas, setCluesFilas] = useState([]);
   const [cluesColumnas, setCluesColumnas] = useState([]);
   const [toggled,setToggled]= useState(false);
+  const [status,setStatus]= useState('');
 
   useEffect(() => {
     // Creation of the pengine server instance.
@@ -31,6 +32,36 @@ function Game() {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
+        handleStart();
+      }
+    });
+  }
+
+  function handleStart(){
+    const squaresRow = JSON.stringify(grid).replaceAll('"_"', '_');
+    const squaresCol = JSON.stringify(grid).replaceAll('"_"', '_');
+    const rowsCluesS = JSON.stringify(rowsClues);
+    const colsCluesS = JSON.stringify(colsClues);
+    const queryInitialcheckRow = `initialCheckList(${squaresRow}, ${rowsCluesS}, RowSatList)`;
+    const queryInitialcheckCol = `initialCheckCol(${squaresCol}, ${colsCluesS}, ColSatList)`;
+    pengine.query(queryInitialcheckRow, (success, response) => {
+      console.log(success);
+      if (success) {
+          console.log(response);
+          for (let index = 0; index < response['RowSatList'].length; index++) {
+              if(response['RowSatList'][index])
+               setCluesFilas([...cluesFilas, index]);
+          }
+      }
+    });
+    pengine.query(queryInitialcheckCol, (success, response) => {
+      console.log(success);
+      if (success) {
+          console.log(response);
+          for (let index = 0; index < response['ColSatList'].length; index++) {
+              if(response['ColSatList'][index])
+               setCluesColumnas([...cluesColumnas, index]);
+          }
       }
     });
   }
@@ -44,7 +75,7 @@ function Game() {
     const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables. squares = [["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]]
     const rowsCluesS = JSON.stringify(rowsClues);
     const colsCluesS = JSON.stringify(colsClues);
-    const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`; // queryS = put("#",[0,1],[], [],[["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]], GrillaRes, FilaSat, ColSat)
+    const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, Win)`; // queryS = put("#",[0,1],[], [],[["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]], GrillaRes, FilaSat, ColSat)
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['ResGrid']);
@@ -60,15 +91,23 @@ function Game() {
         else{
           setCluesColumnas(cluesColumnas.filter(e => e !== j))
         }
-        console.log(response['RowSat']);
-        console.log(response['ColSat']);
+        console.log(response['Win']);
+        if(response['Win']) {
+          setStatus('YOU WIN! CONGRATS');
+        } 
+        else{
+          setStatus('');
+        }
       }
       setWaiting(false);
     });
   }
 
+
+ 
+
   useEffect(() => {
-    setContent(toggled ? 'X' : '#');
+    setContent(toggled ? 'X' : '#');   
   }, [toggled]);
 
   if (!grid) {
@@ -81,6 +120,7 @@ function Game() {
       <div className="game-text">
           {titleText}
       </div>
+      <div className="game-text">{status}</div>
       <div className="content">
         <Board
           grid={grid}
@@ -89,6 +129,7 @@ function Game() {
           cluesFilas={cluesFilas}
           cluesColumnas={cluesColumnas}
           onClick={(i, j) => handleClick(i, j)}
+          onLoad={() => handleStart()}
         />
       </div>
         <div className="TButton">

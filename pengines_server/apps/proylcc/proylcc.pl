@@ -1,9 +1,55 @@
 :- module(proylcc,
 	[  
-		put/8
+		put/9
 	]).
 
 :-use_module(library(lists)).
+
+
+isAWin(Grid,ColsClues,RowClues,Win):-
+	initialCheckCol(Grid,ColsClues,SatCols),
+	initialCheckList(Grid,RowClues,SatRows),
+	isAWinCheck(SatRows,SatCols,Win).
+
+isAWinCheck([],[],true):-
+	!.
+isAWinCheck([true|Rows],[true|Cols],Out):-
+    isAWinCheck(Rows,Cols,Out),
+	!.
+isAWinCheck([_HR|_Rows],[_HC|_Cols],false):-
+	!.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% transposeGrid(?X, +XIndex, +Y, +Xs, -XsY)
+%
+% XsY is the result of replacing the occurrence of X in position XIndex of Xs by Y.
+gridLength(Cont,[],Cont).
+gridLength(Cont,[_H|Grid],Out):-
+	ContX is Cont+1,
+	gridLength(ContX,Grid,Out).
+
+transposeGrid(ColPivot,ColPivot,_Grid,[]).
+transposeGrid(Col,ColPivot,Grid,[Ht|TGrid]):-
+    colToList(Col,Grid,Ht),
+    ColX is Col+1,
+    transposeGrid(ColX,ColPivot,Grid,TGrid).
+	
+
+initialCheckCol(Grid,Clues,SatClues):-
+	gridLength(0,Grid,Len),
+	transposeGrid(0,Len,Grid,TGrid),
+	initialCheckList(TGrid,Clues,SatClues).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% initialCheckList(?X, +XIndex, +Y, +Xs, -XsY)
+%
+% XsY is the result of replacing the occurrence of X in position XIndex of Xs by Y.
+initialCheckList([],[],[]).
+initialCheckList([H|Grid],[Hc|Clues],[Out|SatClues]):-
+	searchClue(Hc,H,Out),
+	initialCheckList(Grid,Clues,SatClues).
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +183,7 @@ checkCols(ColN,ColClues,Grid,ColSat):-
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
 
-put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):-
+put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat,Win):-
 	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
 	replace(Row, RowN, NewRow, Grid, NewGrid),
 
@@ -153,5 +199,7 @@ put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):
 	% Then it check on the grid the clues
 	copy_term(NewGrid,Aux4Col),
 	copy_term(NewGrid,Aux4Row),
+	copy_term(NewGrid,AuxTotal),
     checkRows(RowN,RowsClues,Aux4Row,RowSat),
-    checkCols(ColN,ColsClues,Aux4Col,ColSat).
+    checkCols(ColN,ColsClues,Aux4Col,ColSat),
+	isAWin(AuxTotal,ColsClues,RowsClues,Win).
