@@ -5,6 +5,58 @@
 
 :-use_module(library(lists)).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%generates a unique and correct solution
+
+solvedBoard(Grid,CluesRow,CluesCol,Sol):-
+	copy_term(Grid,NewGrid),
+	generateSolution(NewGrid,CluesRow,CluesCol,Sol),
+	initialCheckCol(Sol,CluesCol,Valid),
+    checkValid(Valid,Out),
+	Out = true,
+	!.
+
+%creates a solution that is correct with the clues of the rows
+generateSolution([],[],_CluesCol,[]).
+generateSolution([H|Grid],[Hc|CluesRow],CluesCol,[Out|Sol]):-
+    generateList(Hc,H,Out),
+	generateSolution(Grid,CluesRow,CluesCol,Sol).
+	
+%checks if a list is an array of true
+checkValid([true],true):-
+	!.
+checkValid([H|T],Out):-
+	H = true,
+	checkValid(T,Out).
+
+%generates a possible solution for a list and a clue
+generateList([],[],[]).
+generateList([],[H|Row],["X"|Out]):-
+	H = "X",
+	generateList([],Row,Out).
+generateList([H|Clues],[X|Row],Out):-
+	X = "#",
+	generateListActive([H|Clues],[X|Row],Out).
+generateList([H|Clues],[X|Row],["X"|Out]):-
+	X = "X",
+	generateList([H|Clues],Row,Out).
+
+
+generateListActive([0],[],[]).
+generateListActive([0|Clues],[X|Row],["X"|Out]):-
+	X = "X",
+	generateList(Clues,Row,Out).
+generateListActive([H|Clues],[X|Row],["#"|Out]):-
+	X = "#",
+	H > 0,
+	Hs is H-1,
+	generateListActive([Hs|Clues],Row,Out).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%checks if the game has been completed
 
 isAWin(Grid,ColsClues,RowClues,Win):-
 	initialCheckCol(Grid,ColsClues,SatCols),
