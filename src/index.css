@@ -99,6 +99,37 @@ body {
   position: relative;
 }
 
+.toggle-btnIDEA{
+  width: 75px; 
+  height: 75px; 
+  background-color: #fff; 
+  background-image: url('https://www.shutterstock.com/image-vector/lamp-icon-vector-light-bulb-260nw-1902581077.jpg');
+  background-size: cover; 
+  background-position: center;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.toggle-btnCOMPLETE{
+  width: 75px; 
+  height: 75px; 
+  background-color: #fff; 
+  background-image: url('https://i.pinimg.com/474x/dd/ca/12/ddca12d41bf7a80e4e9e580e49c5279f.jpg');
+  background-size: cover; 
+  background-position: center;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+
+
+
 .toggle-btn .circleRight{
   height: 20px;
   width: 20px;

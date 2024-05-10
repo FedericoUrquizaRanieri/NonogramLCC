@@ -1,13 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect , useState} from 'react';
 import Square from './Square';
 import Clue from './Clue';
 
-function Board({ grid, rowsClues, colsClues, cluesFilas, cluesColumnas, onClick, onLoad}) {
+function Board({ grid, rowsClues, colsClues, cluesFilas, cluesColumnas, onClick, onLoad, solvedGrid}) {
     const numOfRows = grid.length;
     const numOfCols = grid[0].length;
+
     useEffect(()=>{
         onLoad();
     },[]);
+
+    useEffect(() => {
+        // Actualizar el estado local de la cuadrícula actual cuando solvedGrid cambia
+        if (solvedGrid) {
+            setCurrentGrid(solvedGrid);
+        } else {
+            setCurrentGrid(grid);
+        }
+    }, [solvedGrid, grid]);
+
     return (
         <div className="vertical">
             <div
