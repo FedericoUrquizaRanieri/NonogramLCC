@@ -15,11 +15,10 @@ function Game() {
   const [content, setContent] = useState('#');
   const [cluesFilas, setCluesFilas] = useState([]);
   const [cluesColumnas, setCluesColumnas] = useState([]);
-  const [toggled,setToggled]= useState(false);
-  const [status,setStatus]= useState('');
-  const [idea,setIdea]= useState(false);
+  const [toggled, setToggled] = useState(false);
+  const [status, setStatus] = useState('');
+  const [idea, setIdea] = useState(false);
   const [complete, setComplete] = useState(false);
-  const [pintar, setPintar] = useState(true);
 
   useEffect(() => {
     // Creation of the pengine server instance.
@@ -38,11 +37,11 @@ function Game() {
         setColsClues(response['ColumClues']);
         handleStart();
         console.log(grid);
-        }
+      }
     });
   }
 
-  function handleStart(){
+  function handleStart() {
     const squaresRow = JSON.stringify(grid).replaceAll('"_"', '_');
     const squaresCol = JSON.stringify(grid).replaceAll('"_"', '_');
     const squares = JSON.stringify(grid).replaceAll('"_"', '_');
@@ -53,28 +52,28 @@ function Game() {
 
     pengine.query(queryInitialcheckRow, (success, response) => {
       if (success) {
-          for (let index = 0; index < response['RowSatList'].length; index++) {
-              if(response['RowSatList'][index])
-               setCluesFilas([...cluesFilas, index]);
-          }
+        for (let index = 0; index < response['RowSatList'].length; index++) {
+          if (response['RowSatList'][index])
+            setCluesFilas([...cluesFilas, index]);
+        }
       }
     });
     pengine.query(queryInitialcheckCol, (success, response) => {
       if (success) {
-          for (let index = 0; index < response['ColSatList'].length; index++) {
-              if(response['ColSatList'][index])
-               setCluesColumnas([...cluesColumnas, index]);
-          }
+        for (let index = 0; index < response['ColSatList'].length; index++) {
+          if (response['ColSatList'][index])
+            setCluesColumnas([...cluesColumnas, index]);
+        }
       }
     });
-   
+
     const queryInitialcheckBoard = `solvedBoard(${squares}, ${rowsCluesS}, ${colsCluesS}, gridComplete)`;
     pengine.query(queryInitialcheckBoard, (success, response) => {
-      if(success){
+      if (success) {
         setSolvedGrid(response['gridComplete']);
-    }
-    console.log(solvedGrid);
-      });
+      }
+      console.log(solvedGrid);
+    });
   }
 
   function handleClick(i, j) {
@@ -90,24 +89,23 @@ function Game() {
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['ResGrid']);
-        if(response['RowSat']){
+        if (response['RowSat']) {
           setCluesFilas([...cluesFilas, i])
         }
-        else{
+        else {
           setCluesFilas(cluesFilas.filter(e => e !== i))
         }
-        if(response['ColSat']){
+        if (response['ColSat']) {
           setCluesColumnas([...cluesColumnas, j])
         }
-        else{
+        else {
           setCluesColumnas(cluesColumnas.filter(e => e !== j))
         }
-        console.log(response['Win']);
-        if(response['Win']) {
+        if (response['Win']) {
           setStatus('YOU WIN! CONGRATS');
 
-        } 
-        else{
+        }
+        else {
           setStatus('');
         }
       }
@@ -115,19 +113,13 @@ function Game() {
     });
   }
 
-  useEffect(() => {
-    if (complete && solvedGrid) {
-      setGrid(solvedGrid);
-    }
-  }, [complete, solvedGrid]);
-  
-  useEffect(() => {
-    setContent(toggled ? 'X' : '#');   
-  }, [toggled]);
+  function completeOnClick(){
+    setComplete(!complete);
+  }
 
   useEffect(() => {
-    setPintar(complete? 'false' : 'true')
-  }, [complete, solvedGrid]);
+    setContent(toggled ? 'X' : '#');
+  }, [toggled]);
 
   if (!grid) {
     return null;
@@ -137,7 +129,7 @@ function Game() {
   return (
     <div className="game">
       <div className="game-text">
-          {titleText}
+        {titleText}
       </div>
       <div className="game-text">{status}</div>
       <div className="content">
@@ -149,23 +141,24 @@ function Game() {
           cluesColumnas={cluesColumnas}
           onClick={(i, j) => handleClick(i, j)}
           onLoad={() => handleStart()}
-          solvedGrid={solvedGrid}
         />
       </div>
-        <div className="TButton">
-        <button className={`toggle-btnCOMPLETE`} onClick={()=> setComplete(!complete)}>
-            </button>
-        <div className='CrossSquare'>
-            <b style={{fontSize:28}}>X</b>
+      <div className="TButton">
+        <button className={`toggle-btnCOMPLETE`} onClick={() => completeOnClick()}>
+        </button>
+        <div style={{display: "flex",alignItems: "center"}}>
+          <div className='CrossSquare'>
+            <b style={{ fontSize: 28 }}>X</b>
           </div>
-          <button className={`toggle-btn`} onClick={()=> setToggled(!toggled)}>
-            <div className={`${toggled ? 'circleRight' : 'circleLeft' }`}></div>
+          <button className={`toggle-btn`} onClick={() => setToggled(!toggled)}>
+            <div className={`${toggled ? 'circleRight' : 'circleLeft'}`}></div>
           </button>
           <div className='paint-mode'>
           </div>
-          <button className={`toggle-btnIDEA`} onClick={()=> setIdea(!idea)}>
-            </button>
         </div>
+        <button className={`toggle-btnIDEA`} onClick={() => setIdea(!idea)}>
+        </button>
+      </div>
     </div>
   );
 }
