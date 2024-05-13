@@ -28,16 +28,22 @@ function Game() {
   }, []);
 
   function handleServerReady(instance) {
+    if(waiting){
+      return;
+    }
     pengine = instance;
-    const queryS = 'init(RowClues, ColumClues, Grid)';
+    const queryS = 'init(RowClues, ColumnClues, Grid)';
+    setWaiting(true);
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
-        setColsClues(response['ColumClues']);
+        setColsClues(response['ColumnClues']);
         handleStart();
-        console.log(grid);
+
       }
+      setWaiting(false);
+
     });
   }
 
@@ -52,20 +58,26 @@ function Game() {
 
     pengine.query(queryInitialcheckRow, (success, response) => {
       if (success) {
+        const updatedCluesFilas = [...cluesFilas];
         for (let index = 0; index < response['RowSatList'].length; index++) {
           if (response['RowSatList'][index])
-            setCluesFilas([...cluesFilas, index]);
+          updatedCluesFilas.push(index);
         }
-      }
+        setCluesFilas(updatedCluesFilas);
+      }   
     });
+    
     pengine.query(queryInitialcheckCol, (success, response) => {
       if (success) {
+        const updatedCluesColumnas = [...cluesColumnas];
         for (let index = 0; index < response['ColSatList'].length; index++) {
           if (response['ColSatList'][index])
-            setCluesColumnas([...cluesColumnas, index]);
+          updatedCluesColumnas.push(index);
         }
-      }
-    });
+        setCluesColumnas(updatedCluesColumnas);
+      }   
+
+    })
 
     const queryInitialcheckBoard = `solvedBoard(${squares}, ${rowsCluesS}, ${colsCluesS}, gridComplete)`;
     pengine.query(queryInitialcheckBoard, (success, response) => {
@@ -81,19 +93,18 @@ function Game() {
     if (waiting) {
       return;
     }
-    // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
+    // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.
     const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables. squares = [["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]]
     const rowsCluesS = JSON.stringify(rowsClues);
     const colsCluesS = JSON.stringify(colsClues);
     const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, Win)`; // queryS = put("#",[0,1],[], [],[["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]], GrillaRes, FilaSat, ColSat)
+    console.log(queryS);
+    setWaiting(true);
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['ResGrid']);
         if (response['RowSat']) {
           setCluesFilas([...cluesFilas, i])
-        }
-        else {
-          setCluesFilas(cluesFilas.filter(e => e !== i))
         }
         if (response['ColSat']) {
           setCluesColumnas([...cluesColumnas, j])
@@ -103,7 +114,6 @@ function Game() {
         }
         if (response['Win']) {
           setStatus('YOU WIN! CONGRATS');
-
         }
         else {
           setStatus('');
