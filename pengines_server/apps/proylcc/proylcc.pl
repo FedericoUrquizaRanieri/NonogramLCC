@@ -69,6 +69,12 @@ isAWinCheck([],[],true):-
 isAWinCheck([true|Rows],[true|Cols],Out):-
     isAWinCheck(Rows,Cols,Out),
 	!.
+isAWinCheck([],[true|Cols],Out):-
+	isAWinCheck([],Cols,Out),
+	!.
+isAWinCheck([true|Rows],[],Out):-
+	isAWinCheck(Rows,[],Out),
+	!.
 isAWinCheck([_HR|_Rows],[_HC|_Cols],false):-
 	!.
 
