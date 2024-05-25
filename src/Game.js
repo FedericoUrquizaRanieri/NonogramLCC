@@ -106,6 +106,9 @@ function Game() {
         if (response['RowSat']) {
           setCluesFilas([...cluesFilas, i])
         }
+        else {
+          setCluesFilas(cluesFilas.filter(e => e !== i))
+        }
         if (response['ColSat']) {
           setCluesColumnas([...cluesColumnas, j])
         }
@@ -114,12 +117,13 @@ function Game() {
         }
         if (response['Win']) {
           setStatus('YOU WIN! CONGRATS');
+          setWaiting(true);
         }
         else {
           setStatus('');
+          setWaiting(false);
         }
       }
-      setWaiting(false);
     });
   }
 
