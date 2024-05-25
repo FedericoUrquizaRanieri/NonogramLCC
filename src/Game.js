@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Board from './Board';
 import PengineClient from './PengineClient';
+import Board from './Board';
 
 let pengine;
 
@@ -21,70 +21,21 @@ function Game() {
   const [complete, setComplete] = useState(false);
 
   useEffect(() => {
-    // Creation of the pengine server instance.
-    // This is executed just once, after the first render.
+    // Creation of the pengine server instance.    
+    // This is executed just once, after the first render.    
     // The callback will run when the server is ready, and it stores the pengine instance in the pengine variable. 
     PengineClient.init(handleServerReady);
   }, []);
 
   function handleServerReady(instance) {
-    if(waiting){
-      return;
-    }
     pengine = instance;
-    const queryS = 'init(RowClues, ColumnClues, Grid)';
-    setWaiting(true);
+    const queryS = 'init(RowClues, ColumClues, Grid)';
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
-        setColsClues(response['ColumnClues']);
-        handleStart();
-
+        setColsClues(response['ColumClues']);
       }
-      setWaiting(false);
-
-    });
-  }
-
-  function handleStart() {
-    const squaresRow = JSON.stringify(grid).replaceAll('"_"', '_');
-    const squaresCol = JSON.stringify(grid).replaceAll('"_"', '_');
-    const squares = JSON.stringify(grid).replaceAll('"_"', '_');
-    const rowsCluesS = JSON.stringify(rowsClues);
-    const colsCluesS = JSON.stringify(colsClues);
-    const queryInitialcheckRow = `initialCheckList(${squaresRow}, ${rowsCluesS}, RowSatList)`;
-    const queryInitialcheckCol = `initialCheckCol(${squaresCol}, ${colsCluesS}, ColSatList)`;
-
-    pengine.query(queryInitialcheckRow, (success, response) => {
-      if (success) {
-        const updatedCluesFilas = [...cluesFilas];
-        for (let index = 0; index < response['RowSatList'].length; index++) {
-          if (response['RowSatList'][index])
-          updatedCluesFilas.push(index);
-        }
-        setCluesFilas(updatedCluesFilas);
-      }   
-    });
-    
-    pengine.query(queryInitialcheckCol, (success, response) => {
-      if (success) {
-        const updatedCluesColumnas = [...cluesColumnas];
-        for (let index = 0; index < response['ColSatList'].length; index++) {
-          if (response['ColSatList'][index])
-          updatedCluesColumnas.push(index);
-        }
-        setCluesColumnas(updatedCluesColumnas);
-      }   
-
-    })
-
-    const queryInitialcheckBoard = `solvedBoard(${squares}, ${rowsCluesS}, ${colsCluesS}, gridComplete)`;
-    pengine.query(queryInitialcheckBoard, (success, response) => {
-      if (success) {
-        setSolvedGrid(response['gridComplete']);
-      }
-      console.log(solvedGrid);
     });
   }
 
@@ -93,42 +44,37 @@ function Game() {
     if (waiting) {
       return;
     }
-    // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.
+    // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
     const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables. squares = [["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]]
     const rowsCluesS = JSON.stringify(rowsClues);
     const colsCluesS = JSON.stringify(colsClues);
     const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, Win)`; // queryS = put("#",[0,1],[], [],[["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]], GrillaRes, FilaSat, ColSat)
-    console.log(queryS);
     setWaiting(true);
     pengine.query(queryS, (success, response) => {
-      if (success) {
-        setGrid(response['ResGrid']);
-        if (response['RowSat']) {
-          setCluesFilas([...cluesFilas, i])
+        if (success) {
+          setGrid(response['ResGrid']);
+          if (response['RowSat']) {
+            setCluesFilas([...cluesFilas, i])
+          }
+          else {
+            setCluesFilas(cluesFilas.filter(e => e !== i))
+          }
+          if (response['ColSat']) {
+            setCluesColumnas([...cluesColumnas, j])
+          }
+          else {
+            setCluesColumnas(cluesColumnas.filter(e => e !== j))
+          }
+          if (response['Win']) {
+            setStatus('YOU WIN! CONGRATS');
+            setWaiting(true);
+          }
+          else {
+            setStatus('');
+            setWaiting(false);
+          }
         }
-        else {
-          setCluesFilas(cluesFilas.filter(e => e !== i))
-        }
-        if (response['ColSat']) {
-          setCluesColumnas([...cluesColumnas, j])
-        }
-        else {
-          setCluesColumnas(cluesColumnas.filter(e => e !== j))
-        }
-        if (response['Win']) {
-          setStatus('YOU WIN! CONGRATS');
-          setWaiting(true);
-        }
-        else {
-          setStatus('');
-          setWaiting(false);
-        }
-      }
-    });
-  }
-
-  function completeOnClick(){
-    setComplete(!complete);
+      });
   }
 
   useEffect(() => {
@@ -154,11 +100,11 @@ function Game() {
           cluesFilas={cluesFilas}
           cluesColumnas={cluesColumnas}
           onClick={(i, j) => handleClick(i, j)}
-          onLoad={() => handleStart()}
+          //onLoad={() => handleStart()}
         />
       </div>
       <div className="TButton">
-        <button className={`toggle-btnCOMPLETE`} onClick={() => completeOnClick()}>
+        <button className={`toggle-btnCOMPLETE`} onClick={() => setComplete()}>
         </button>
         <div style={{display: "flex",alignItems: "center"}}>
           <div className='CrossSquare'>

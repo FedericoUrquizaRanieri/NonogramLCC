@@ -4,6 +4,7 @@
 	]).
 
 :-use_module(library(lists)).
+:-use_module(library(clpfd)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -76,21 +77,9 @@ isAWinCheck([_HR|_Rows],[_HC|_Cols],false):-
 % transposeGrid(?X, +XIndex, +Y, +Xs, -XsY)
 %
 % XsY is the result of replacing the occurrence of X in position XIndex of Xs by Y.
-gridLength(Cont,[],Cont).
-gridLength(Cont,[_H|Grid],Out):-
-	ContX is Cont+1,
-	gridLength(ContX,Grid,Out).
-
-transposeGrid(ColPivot,ColPivot,_Grid,[]).
-transposeGrid(Col,ColPivot,Grid,[Ht|TGrid]):-
-    colToList(Col,Grid,Ht),
-    ColX is Col+1,
-    transposeGrid(ColX,ColPivot,Grid,TGrid).
-	
 
 initialCheckCol(Grid,Clues,SatClues):-
-	gridLength(0,Grid,Len),
-	transposeGrid(0,Len,Grid,TGrid),
+	transpose(Grid,TGrid),
 	initialCheckList(TGrid,Clues,SatClues).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
