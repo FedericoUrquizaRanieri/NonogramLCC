@@ -8,7 +8,7 @@ function Game() {
 
   // State
   const [grid, setGrid] = useState(null);
-  const [solvedGrid, setSolvedGrid] = useState(null);
+  const [solved, setSolved] = useState(null);
   const [rowsClues, setRowsClues] = useState(null);
   const [colsClues, setColsClues] = useState(null);
   const [waiting, setWaiting] = useState(false);
@@ -18,7 +18,6 @@ function Game() {
   const [toggled, setToggled] = useState(false);
   const [status, setStatus] = useState('');
   const [idea, setIdea] = useState(false);
-  const [complete, setComplete] = useState(false);
 
   useEffect(() => {
     // Creation of the pengine server instance.    
@@ -35,6 +34,44 @@ function Game() {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
+      }
+    });
+  }
+
+  function handleStart() {
+    const squaresRow = JSON.stringify(grid).replaceAll('"_"', '_');
+    const squaresCol = JSON.stringify(grid).replaceAll('"_"', '_');
+    const squaresComp = JSON.stringify(grid).replaceAll('"_"', '_');
+    const rowsCluesS = JSON.stringify(rowsClues);
+    const colsCluesS = JSON.stringify(colsClues);
+    const queryInitialcheckRow = `initialCheckList(${squaresRow}, ${rowsCluesS}, RowSatList)`;
+    const queryInitialcheckCol = `initialCheckCol(${squaresCol}, ${colsCluesS}, ColSatList)`;
+    const queryCompleteBoard = `solvedBoard(${squaresComp}, ${rowsCluesS}, ${colsCluesS}, GridComplete)`;
+
+    pengine.query(queryInitialcheckRow, (success, response) => {
+      if (success) {
+        const updatedCluesFilas = [...cluesFilas];
+        for (let index = 0; index < response['RowSatList'].length; index++) {
+          if (response['RowSatList'][index])
+          updatedCluesFilas.push(index);
+        }
+        setCluesFilas(updatedCluesFilas);
+      }   
+    });
+    pengine.query(queryInitialcheckCol, (success, response) => {
+      if (success) {
+        const updatedCluesColumnas = [...cluesColumnas];
+        for (let index = 0; index < response['ColSatList'].length; index++) {
+          if (response['ColSatList'][index])
+          updatedCluesColumnas.push(index);
+        }
+        setCluesColumnas(updatedCluesColumnas);
+      }   
+    });
+
+    pengine.query(queryCompleteBoard, (success, response) => {
+      if(success){
+        setSolved(response['GridComplete']);
       }
     });
   }
@@ -100,11 +137,11 @@ function Game() {
           cluesFilas={cluesFilas}
           cluesColumnas={cluesColumnas}
           onClick={(i, j) => handleClick(i, j)}
-          //onLoad={() => handleStart()}
+          onLoad={() => handleStart()}
         />
       </div>
       <div className="TButton">
-        <button className={`toggle-btnCOMPLETE`} onClick={() => setComplete()}>
+        <button className={`toggle-btnCOMPLETE`}>
         </button>
         <div style={{display: "flex",alignItems: "center"}}>
           <div className='CrossSquare'>

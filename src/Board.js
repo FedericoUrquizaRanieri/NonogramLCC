@@ -2,10 +2,13 @@ import React, { useEffect } from 'react';
 import Square from './Square';
 import Clue from './Clue';
 
-function Board({ grid, rowsClues, colsClues, cluesFilas, cluesColumnas, onClick}) {
+function Board({ grid, rowsClues, colsClues, cluesFilas, cluesColumnas, onClick,onLoad}) {
     const numOfRows = grid.length;
     const numOfCols = grid[0].length;
 
+    useEffect(()=>{
+        onLoad();
+    },[]);
 
     return (
         <div className="vertical">
