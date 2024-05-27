@@ -154,7 +154,7 @@ function Game() {
       setTimeout(() => {
         setGrid(auxGrid);
         setWaiting(false);
-      }, 5000);
+      }, 3000);
     }
   }
 
@@ -197,7 +197,7 @@ function Game() {
           <div className='paint-mode'>
           </div>
         </div>
-        <button className={`toggle-btnIDEA`} onClick={() => setIdea(!idea)}>
+        <button className={`toggle-btnIDEA ${idea ? 'active' : ''}`} onClick={() => setIdea(!idea)}>
         </button>
       </div>
     </div>

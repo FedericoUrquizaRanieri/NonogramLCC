@@ -115,6 +115,12 @@ body {
   font-weight: bold;
 }
 
+.toggle-btnIDEA.active {
+  background-image: url('https://static.independent.co.uk/2024/02/14/15/newFile-3.jpg');
+  background-size: cover; 
+  background-position: center;
+}
+
 .toggle-btnCOMPLETE{
   width: 75px; 
   height: 75px; 
