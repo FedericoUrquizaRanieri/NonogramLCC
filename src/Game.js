@@ -18,6 +18,7 @@ function Game() {
   const [toggled, setToggled] = useState(false);
   const [status, setStatus] = useState('');
   const [idea, setIdea] = useState(false);
+  
 
   useEffect(() => {
     // Creation of the pengine server instance.    
@@ -85,9 +86,12 @@ function Game() {
     const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables. squares = [["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]]
     const rowsCluesS = JSON.stringify(rowsClues);
     const colsCluesS = JSON.stringify(colsClues);
-    const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, Win)`; // queryS = put("#",[0,1],[], [],[["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]], GrillaRes, FilaSat, ColSat)
+    //creation of 2 separate querys for a normal click and one for a solution
+    const querySX = `put("${solved[i][j]}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, Win)`;
+    const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, Win)`;
     setWaiting(true);
-    pengine.query(queryS, (success, response) => {
+    if(idea){
+      pengine.query(querySX, (success, response) => {
         if (success) {
           setGrid(response['ResGrid']);
           if (response['RowSat']) {
@@ -112,6 +116,46 @@ function Game() {
           }
         }
       });
+    }
+    else{
+      pengine.query(queryS, (success, response) => {
+        if (success) {
+          setGrid(response['ResGrid']);
+          if (response['RowSat']) {
+            setCluesFilas([...cluesFilas, i])
+          }
+          else {
+            setCluesFilas(cluesFilas.filter(e => e !== i))
+          }
+          if (response['ColSat']) {
+            setCluesColumnas([...cluesColumnas, j])
+          }
+          else {
+            setCluesColumnas(cluesColumnas.filter(e => e !== j))
+          }
+          if (response['Win']) {
+            setStatus('YOU WIN! CONGRATS');
+            setWaiting(true);
+          }
+          else {
+            setStatus('');
+            setWaiting(false);
+          }
+        }
+      });
+    }
+  }
+
+  function completeGrid(){
+    if(!waiting){
+      var auxGrid = grid;
+      setGrid(solved);
+      setWaiting(true);
+      setTimeout(() => {
+        setGrid(auxGrid);
+        setWaiting(false);
+      }, 5000);
+    }
   }
 
   useEffect(() => {
@@ -141,7 +185,7 @@ function Game() {
         />
       </div>
       <div className="TButton">
-        <button className={`toggle-btnCOMPLETE`}>
+        <button className={`toggle-btnCOMPLETE`} onClick={() => completeGrid()}>
         </button>
         <div style={{display: "flex",alignItems: "center"}}>
           <div className='CrossSquare'>
